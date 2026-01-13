@@ -1,14 +1,27 @@
+import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
 client = OpenAI()
 
-user_prompt = input("Enter your prompt:")
+user_prompt = input("Enter your prompt: ")
 
-response = client.responses.create(
+system_message = {
+    "role": "system", 
+    "content": """
+    in all messages use only 10 words maximum
+    """
+}
+
+messages = [
+    system_message,
+    {"role": "user", "content": user_prompt}
+]
+
+response = client.chat.completions.create(
     model="gpt-5-nano",
-    input="write me a 10-word short story about a group of coders from armenia"
+    messages=messages
 )
 
-print(response.output_text)
+print(response.choices[0].message.content)
